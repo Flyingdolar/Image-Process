@@ -1,4 +1,5 @@
 <template>
+  <Toast />
   <Menubar :model="menuItems" class="fixed top-0 w-full bg-white z-50">
     <template #end>
       <Button class="h-9" label="繁體中文" icon="pi pi-globe" outlined />
@@ -13,6 +14,7 @@
     @change="onFileChange"
   />
   <div class="p-8" />
+  <div>{{ helloworld }}</div>
   <ScrollPanel class="top-20">
     <div class="flex gap-4 px-6 py-4">
       <ImageCard header="輸入圖像" :src="srcInput" />
@@ -35,14 +37,21 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import { useToast } from "primevue/usetoast";
+
 // Primevue Components
-import Menubar from "primevue/menubar";
+import Toast from "primevue/toast";
 import Button from "primevue/button";
+import Menubar from "primevue/menubar";
 import ImageCard from "@/components/ImgCard.vue";
 import ScrollPanel from "primevue/scrollpanel";
 
 // Variables
+const toast = useToast();
 const imgFile = ref(null);
+
+// eslint-disable-next-line
+const helloworld = eel.hello_world();
 
 // Show/Hide Image Cards
 const showRotate = ref(false);
@@ -114,6 +123,16 @@ const menuItems = ref([
   },
 ]);
 
+function closeAll() {
+  showRotate.value = false;
+  showHistogram.value = false;
+}
+
+function cleanAll() {
+  srcRotate.value = "";
+  srcHistogram.value = "";
+}
+
 // Homework 0 : Image I/O
 function onFileChange(e: any) {
   const file = e.target.files[0];
@@ -121,19 +140,38 @@ function onFileChange(e: any) {
   reader.readAsDataURL(file);
   reader.onload = (e) => {
     srcInput.value = e.target?.result as string;
+    closeAll(), cleanAll();
   };
 }
 function onFileRemove() {
   imgFile.value.value = null;
   srcInput.value = "";
+  closeAll(), cleanAll();
 }
 
 // Homework 1 : Rotate Image
 function onRotate(direction: number) {
-  if (direction === 1) {
-    console.log("Rotate 90 degree to right");
-  } else {
-    console.log("Rotate 90 degree to left");
+  if (srcInput.value === "") {
+    toast.add({
+      severity: "warn",
+      summary: "找不到圖像",
+      detail: "請先從檔案 -> 輸入圖像",
+      life: 3000,
+    });
+    return;
   }
+
+  closeAll();
+  showRotate.value = true;
+
+  // Send Image to Python eel
+  // eslint-disable-next-line
+  eel.rotate_image(
+    srcInput.value,
+    direction
+  )((img: string) => {
+    srcRotate.value = img;
+    console.log(img);
+  });
 }
 </script>

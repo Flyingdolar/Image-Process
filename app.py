@@ -6,13 +6,17 @@ import matplotlib.pyplot as plt
 eel.init('web')
 eel.start('index.html', size=(600, 400))
 
-# 請幫我寫一個使用 opencv 的程式，將一張圖片反轉
+@eel.expose
+def hello_world():
+    return "Hello from python"
 
-
-# @eel.expose
-# def reverse(img):
-#     img = cv2.imread(img)
-#     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-#     img = cv2.flip(img, 1)
-#     plt.imshow(img)
-#     plt.show()
+# Get the image from frotend and rotate it
+# Frontend Called as: eel.rotate_image(image_path, direction<0 or 1>)(callback)
+@eel.expose
+def rotate_image(image_path, direction):
+    image = cv2.imread(image_path)
+    if direction == 0:
+        image = cv2.rotate(image, cv2.ROTATE_90_COUNTERCLOCKWISE)
+    else:
+        image = cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)
+    cv2.imwrite(image_path, image)
