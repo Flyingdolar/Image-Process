@@ -14,7 +14,7 @@
     @change="onFileChange"
   />
   <div class="p-8" />
-  <div>{{ helloworld }}</div>
+  <!-- <div>{{ helloworld }}</div> -->
   <ScrollPanel class="top-20">
     <div class="flex gap-4 px-6 py-4">
       <ImageCard header="輸入圖像" :src="srcInput" />
@@ -51,7 +51,7 @@ const toast = useToast();
 const imgFile = ref(null);
 
 // eslint-disable-next-line
-const helloworld = eel.hello_world();
+// const helloworld = eel.hello_world();
 
 // Show/Hide Image Cards
 const showRotate = ref(false);
@@ -144,6 +144,7 @@ function onFileChange(e: any) {
   };
 }
 function onFileRemove() {
+  if (imgFile.value === null) return;
   imgFile.value.value = null;
   srcInput.value = "";
   closeAll(), cleanAll();
@@ -166,12 +167,12 @@ function onRotate(direction: number) {
 
   // Send Image to Python eel
   // eslint-disable-next-line
-  eel.rotate_image(
-    srcInput.value,
-    direction
-  )((img: string) => {
-    srcRotate.value = img;
-    console.log(img);
-  });
+  // eel.rotate_image(
+  //   srcInput.value,
+  //   direction
+  // )((img: string) => {
+  //   srcRotate.value = img;
+  //   console.log(img);
+  // });
 }
 </script>
