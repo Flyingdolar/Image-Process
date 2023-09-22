@@ -23,6 +23,7 @@ pnpm-debug.log*
 *.sw?
 
 #Electron-builder output
+*.spec
 /dist_electron
 server/build
 server/dist
