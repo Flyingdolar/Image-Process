@@ -1,0 +1,45 @@
+.grid-container {
+    border: 1px solid #ccc; /* 容器外框边框样式 */
+    border-radius: 8px; /* 圆角边框 */
+    padding: 24px; /* 内边距 */
+    text-align: center; /* 文本居中 */
+}
+
+.grid {
+    display: flex; /* 水平排列子元素 */
+    flex-wrap: wrap; /* 当子元素超出容器宽度时换行 */
+    gap: 24px;  /* 子元素之间的间距 */
+}
+
+.image-box {
+    display: flex; /* 水平排列子元素 */
+    position: relative; /* 设置为相对定位 */
+    align-items: center; /* 上下居中 */
+    justify-content: center; /* 左右居中 */
+    width: calc(33.33% - 18px); /* 设置宽度为三分之一，减去间距 */
+    height: 240px; /* 设置高度 */
+    background-color: #333;
+    border: 1px solid #ccc; /* 边框样式 */
+    border-radius: 8px; /* 圆角边框 */
+}
+
+.image-box img {
+    display: block; /* 图片设置为块级元素 */
+    max-width: 100%; /* 图片宽度最大为 100% */
+    max-height: 100%; /* 图片高度最大为 100% */
+    object-fit: contain; /* 图片不变形，完整显示 */
+    z-index: 50; /* 图片层级 */
+}
+
+.image-box:hover {
+    cursor: pointer; /* 鼠标移入时显示手型 */
+    border-color: #aaa; /* 边框颜色变浅 */
+}
+
+.no-data {
+    position: absolute; /* 设置为绝对定位 */
+    top: 50%; /* 距离顶部 50% */
+    color: #999; /* 文本颜色 */
+    font-size: 14px; /* 文本字号 */
+    z-index: 10; /* 层级 */
+}
