@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIP 612K0020C</title>
+    <link rel="stylesheet" href="style/Style.css">      <!-- Set style to style.css -->
+    <link rel="stylesheet" href="style/Button.css">     <!-- Set button style -->
+    <link rel="stylesheet" href="style/Image.css">      <!-- Set grid style -->
+    <script type="text/javascript" src="/eel.js"></script>  <!-- Set eel -->
+    <script src="script.js" defer></script>                 <!-- Set script -->
+</head>
+<body>
+    <div class="page">
+        <!-- Buttons & Functions -->
+        <div class="functions-container">
+            <div class="functions">
+                <button class="primaryBtn" id="importBtn">匯入圖片</button>
+                <button class="normalBtn" id="featureBtn1">旋轉圖片</button>
+                <!-- <button class="normalBtn" id="featureBtn2">生成直方圖</button>
+                <button class="normalBtn" id="featureBtn3">產生雜訊</button> -->
+            </div>
+        </div>
+
+        <!-- Image Grid -->
+        <div class="grid-container">
+            <div class="grid">
+                <div class="image-box" id="imageBox1">
+                    <img id="image1">
+                    <div class="no-data">NO DATA</div>
+                </div>
+                <div class="image-box" id="imageBox2">
+                    <img id="image2">
+                    <div class="no-data">NO DATA</div>
+                </div>
+                <div class="image-box" id="imageBox3">
+                    <img id="image3">
+                    <div class="no-data">NO DATA</div>
+                </div>
+                <div class="image-box" id="imageBox4">
+                    <img id="image4">
+                    <div class="no-data">NO DATA</div>
+                </div>
+                <div class="image-box" id="imageBox5">
+                    <img id="image5">
+                    <div class="no-data">NO DATA</div>
+                </div>
+                <div class="image-box" id="imageBox6">
+                    <img id="image6">
+                    <div class="no-data">NO DATA</div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Hidden File Input -->
+        <input type="file" id="fileInput" accept="*" style="display: none;">
+    </div>
+</body>
+</html>

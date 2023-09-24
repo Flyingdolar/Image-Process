@@ -1,0 +1,7 @@
+# vscode Setting
+.vscode
+# Build directory
+build
+dist
+img
+*.spec

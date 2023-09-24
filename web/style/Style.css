@@ -1,0 +1,25 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.page {
+    max-width: 816px;
+    margin: auto;
+    padding: 0, 24px;
+    text-align: center;
+}
+
+.functions-container {
+    padding: 16px; /* 内边距 */
+    display: flex; /* 水平排列子元素 */
+    align-items: center; /* 垂直居中子元素 */
+}
+
+.functions {
+    display: flex; /* 水平排列子元素 */
+    gap: 12px;
+}
+
+input[type="file"] {
+    display: none;
+}
