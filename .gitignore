@@ -1,5 +1,7 @@
-# vscode Setting
+# Computer Setting
 .vscode
+.DS_Store
+
 # Build directory
 build
 dist
