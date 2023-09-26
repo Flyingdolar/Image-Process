@@ -68,10 +68,14 @@ fileInput.addEventListener("change", (event) => {
         const reader = new FileReader();
         reader.onload = (event) => {
             var url = event.target.result;
-            // Check url is Image or not from eel
-            eel.check_image(url)(result => {
-                if (result) image1.src = getURL(result);
-                else alert("Please import an image!");
+
+            // EEL: Import Image
+            eel.import_image("origin", url)(ret => {
+                if (!ret.success)
+                    alert(ret.message);
+                else
+                    image1.src = getURL(ret.image);
+                console.log(ret.success);
             });
         };
         reader.readAsDataURL(file);
@@ -80,31 +84,36 @@ fileInput.addEventListener("change", (event) => {
 
 // TODO: Homework 1 - Rotate Image
 feat1.addEventListener("click", () => {
-    var repeat = box2.style.display == "flex" ? true : false;
+    var imgIn = box2.style.display == "flex" ? "rotate" : "origin";
 
-    if (image1.src === "") return;  // No Image
-    if (!repeat) {
-        closeAll();
-        setVisible(box2, "show"), setVisible(image2, "show");
-    }
-    // Get the rotate image from eel
-    eel.rotate_image(repeat)(result => {
-        image2.src = getURL(result)
+    // Setup visibilities
+    closeAll();
+    setVisible(box2, "show"), setVisible(image2, "show");
+
+    // EEL: Rotate Image
+    eel.rotate_image(imgIn, "rotate", 30)(ret => {
+        if (!ret.success)
+            alert(ret.message);
+        else
+            image2.src = getURL(ret.image);
     });
 });
 
 // TODO: Homework 2 - Show Histogram
 feat2.addEventListener("click", () => {
-    if (image1.src === "") return;  // No Image
+    // Setup visibilities
     closeAll();
     setVisible(box3, "show"), setVisible(image3, "show");
-    // Get the histogram from eel
-    eel.show_histogram()(result => {
-        image3.src = getURL(result)
+
+    // EEL: Show Histogram
+    eel.show_histogram("origin", "hist")(ret => {
+        if (!ret.success)
+            alert(ret.message);
+        else
+            image3.src = getURL(ret.image);
     });
 });
 
 // TODO: Homework 3 - Add Noise
 feat3.addEventListener("click", () => {
-    // Do some work here...
 });

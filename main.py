@@ -11,6 +11,11 @@ if not os.path.exists("img"):
     os.makedirs("img")
 
 
+# Set path for fileName
+def set_path(fileName):
+    return "img/" + fileName + ".jpg"
+
+
 # Transform base64 to image
 def decode_base64(data):
     partData = data.split(",")
@@ -28,43 +33,84 @@ def encode_base64(img):
     return b64Data.decode()
 
 
-# TODO: Homework 0: Check Image
+# TODO Homework 0-1: Import Image
 @eel.expose
-def check_image(data):
-    img = decode_base64(data)
+def import_image(imgName, imgData):
+    img = decode_base64(imgData)
     if img is None:
-        # Case: Image Invalid (Not PPM, PNG, JPG, JPEG)
-        return ""
+        return {
+            "success": False,
+            "image": None,
+            "message": "Image Invalid (Not PPM, PNG, JPG, JPEG)",
+        }
     else:
-        cv2.imwrite("img/origin.jpg", img)
-        return encode_base64(img)
+        cv2.imwrite(set_path(imgName), img)
+        return {
+            "success": True,
+            "image": encode_base64(img),
+            "message": "Image Saved at " + set_path(imgName),
+        }
 
 
-# TODO: Homework 1: Rotate Image
+# TODO Homework 0-2: Show Image
 @eel.expose
-def rotate_image(repeat):
-    if repeat is True:
-        img = cv2.imread("img/rotate.jpg")
-    else:
-        img = cv2.imread("img/origin.jpg")
-    img = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
-    # 另外一種做法，使用 numpy 進行矩陣旋轉
-    # img = np.rot90(img, 1)
-    cv2.imwrite("img/rotate.jpg", img)
-    return encode_base64(img)
+def show_image(imgName):
+    img = cv2.imread(set_path(imgName))
+    if img is None:
+        return {
+            "success": False,
+            "image": None,
+            "message": "Image Not Found in: " + set_path(imgName),
+        }
+    return {
+        "success": True,
+        "image": encode_base64(img),
+        "message": "Image is Loaded from: " + set_path(imgName),
+    }
 
 
-# TODO: Homework 2: Show Histogram
+# TODO Homework 1: Rotate Image
 @eel.expose
-def show_histogram():
-    img = cv2.imread("img/origin.jpg")
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # Convert to Gray Image
-    # Draw Histogram via Matplotlib
-    plt.hist(img.ravel(), 256, [0, 256])
-    plt.title("Histogram")  # Set Histogram Title
-    plt.xlabel("Intensity"), plt.ylabel("Frequency")  # Set X, Y Label
-    plt.savefig("img/histogram.jpg"), plt.close()  # Save & Close plot
-    return encode_base64(cv2.imread("img/histogram.jpg"))
+def rotate_image(imgName_in, imgName_save, angle):
+    img = cv2.imread(set_path(imgName_in))
+    if img is None:
+        return {
+            "success": False,
+            "image": None,
+            "message": "Image Not Found in: " + set_path(imgName_in),
+        }
+    height, width = img.shape[:2]
+    center = (width / 2, height / 2)
+    matrix = cv2.getRotationMatrix2D(center, angle, 1)
+    img = cv2.warpAffine(img, matrix, (width, height))
+    cv2.imwrite(set_path(imgName_save), img)
+    return {
+        "success": True,
+        "image": encode_base64(img),
+        "message": "Image Rotate " + str(angle) + " Degree",
+    }
+
+
+# TODO Homework 2: Show Histogram
+@eel.expose
+def show_histogram(imgName_in, imgName_save):
+    img = cv2.imread(set_path(imgName_in))
+    if img is None:
+        return {
+            "success": False,
+            "image": None,
+            "message": "Image Not Found in: " + set_path(imgName_in),
+        }
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    plt.hist(img.ravel(), 100, [0, 255])
+    plt.title("Histogram")
+    plt.xlabel("Intensity"), plt.ylabel("Frequency")
+    plt.savefig(set_path(imgName_save)), plt.close()
+    return {
+        "success": True,
+        "image": encode_base64(cv2.imread(set_path(imgName_save))),
+        "message": "Histogram is Saved at: " + set_path(imgName_save),
+    }
 
 
 # Start up Window & Set Window Size
