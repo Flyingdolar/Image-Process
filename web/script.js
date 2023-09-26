@@ -95,7 +95,13 @@ feat1.addEventListener("click", () => {
 
 // TODO: Homework 2 - Show Histogram
 feat2.addEventListener("click", () => {
-    // Do some work here...
+    if (image1.src === "") return;  // No Image
+    closeAll();
+    setVisible(box3, "show"), setVisible(image3, "show");
+    // Get the histogram from eel
+    eel.show_histogram()(result => {
+        image3.src = getURL(result)
+    });
 });
 
 // TODO: Homework 3 - Add Noise

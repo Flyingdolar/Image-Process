@@ -54,5 +54,18 @@ def rotate_image(repeat):
     return encode_base64(img)
 
 
+# TODO: Homework 2: Show Histogram
+@eel.expose
+def show_histogram():
+    img = cv2.imread("img/origin.jpg")
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # Convert to Gray Image
+    # Draw Histogram via Matplotlib
+    plt.hist(img.ravel(), 256, [0, 256])
+    plt.title("Histogram")  # Set Histogram Title
+    plt.xlabel("Intensity"), plt.ylabel("Frequency")  # Set X, Y Label
+    plt.savefig("img/histogram.jpg"), plt.close()  # Save & Close plot
+    return encode_base64(cv2.imread("img/histogram.jpg"))
+
+
 # Start up Window & Set Window Size
 eel.start("index.html", size=(650, 550))
