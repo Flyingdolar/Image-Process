@@ -20,6 +20,22 @@ body {
     gap: 12px;
 }
 
+.dropDown {
+    position: relative;
+}
+
+.section {
+    /* Set Vertical Arrangement */
+    display: none;
+    width: 100%;
+    background-color: #EDEFF2;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    flex-direction: column;
+    position: absolute;
+    gap: 2px;
+}
+
 input[type="file"] {
     display: none;
 }
