@@ -33,6 +33,16 @@ def encode_base64(img):
     return b64Data.decode()
 
 
+# Check overflow
+def check_overflow(value, limit):
+    if value > limit:
+        return limit
+    elif value < 0:
+        return 0
+    else:
+        return value
+
+
 # TODO Homework 0-1: Import Image
 @eel.expose
 def import_image(imgName, imgData):
@@ -110,6 +120,54 @@ def show_histogram(imgName_in, imgName_save):
         "success": True,
         "image": encode_base64(cv2.imread(set_path(imgName_save))),
         "message": "Histogram is Saved at: " + set_path(imgName_save),
+    }
+
+
+# TODO Homework 3: Add Noise -- Gaussian White Noise
+@eel.expose
+def gen_GaussianW_noise(imgName_in, imgName_save, mean, sigma):
+    img = cv2.imread(set_path(imgName_in))
+    if img is None:
+        return {
+            "success": False,
+            "image": None,
+            "message": "Image Not Found in: " + set_path(imgName_in),
+        }
+    height, width = img.shape[:2]
+    resol = height * width
+    # Create 1D zero Array base on resolution, then reshape to 2D with height and width
+    noise = np.zeros(resol)
+    # Create a for loop jump by 2
+    for idx in range(0, resol, 2):
+        r1 = np.random.uniform(0, 1)
+        r2 = np.random.uniform(0, 1)
+        p1 = np.sqrt(-2 * np.log(r1)) * np.cos(2 * np.pi * r2) * sigma + mean
+        p2 = np.sqrt(-2 * np.log(r1)) * np.sin(2 * np.pi * r2) * sigma + mean
+        noise[idx] = check_overflow(p1, 255)
+        noise[idx + 1] = check_overflow(p2, 255)
+
+    noise = noise.reshape(height, width)
+    # Output Noise Image
+    cv2.imwrite(set_path(imgName_save), noise)
+    return {
+        "success": True,
+        "image": encode_base64(noise),
+        "message": "Gaussian White Noise is Saved at: " + set_path(imgName_save),
+    }
+
+
+# TODO Homework 3: Add Noise -- Salt and Pepper Noise
+@eel.expose
+def gen_SaltPepper_noise(imgName_save, prob):
+    img = np.random.uniform(0, 1, (512, 512))
+    img = img.astype(np.uint8)
+    img[img < prob] = 0
+    img[img > 1 - prob] = 255
+    cv2.imwrite(set_path(imgName_save), img)
+    return {
+        "success": True,
+        "image": encode_base64(img),
+        "message": "Salt and Pepper Noise is Saved at: " + set_path(imgName_save),
     }
 
 

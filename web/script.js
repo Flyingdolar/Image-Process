@@ -9,15 +9,6 @@ const feat3_1 = document.getElementById("noiseBtn1");
 const feat3_2 = document.getElementById("noiseBtn2");
 // Image Boxs
 const box = document.getElementsByClassName("image-box");
-// Preview Images
-const image1 = document.getElementById("image1");
-const image2 = document.getElementById("image2");
-const image3 = document.getElementById("image3");
-const image4 = document.getElementById("image4");
-const image5 = document.getElementById("image5");
-const image6 = document.getElementById("image6");
-const image7 = document.getElementById("image7");
-const image8 = document.getElementById("image8");
 // Section
 var section = document.getElementsByClassName("section")[0];
 var lastAction = "none";
@@ -77,7 +68,7 @@ fileInput.addEventListener("change", (event) => {
                 if (!ret.success)
                     alert(ret.message);
                 else
-                    image1.src = getURL(ret.image);
+                    box[0].getElementsByTagName("img")[0].src = getURL(ret.image);
                 console.log(ret.success);
             });
         };
@@ -114,7 +105,6 @@ feat2.addEventListener("click", () => {
     });
 });
 
-// TODO: Homework 3 - Add Noise
 feat3.addEventListener("mouseover", () => {
     document.getElementsByClassName("section")[0].style.display = "flex";
 });
@@ -122,14 +112,23 @@ feat3.addEventListener("mouseout", () => {
     document.getElementsByClassName("section")[0].style.display = "none";
 });
 
-// // ?    Homework 3 - Add Noise - Gaussian Noise
-// feat3_1.addEventListener("click", () => {
-//     section.style.display = "none";
-//     // Setup visibilities
-//     closeAll();
-//     setVisible(box4, "show"), setVisible(image4, "show");
-//     setVisible(box5, "show"), setVisible(image5, "show");
-//     setVisible(box6, "show"), setVisible(image6, "show");
-//     setVisible(box7, "show"), setVisible(image7, "show");
-//     setVisible(box8, "show"), setVisible(image8, "show");
-// });
+// TODO: Homework 3 - Add Noise - Gaussian White Noise
+feat3_1.addEventListener("click", () => {
+    // Setup visibilities
+    closeAll(), openBoxs(2);
+    lastAction = "noise-gaussian";
+    // EEL: Add Noise - Gaussian White Noise
+    eel.gen_GaussianW_noise("origin", "gaussianW", 127, 10)(ret => {
+        if (!ret.success)
+            alert(ret.message);
+        else
+            box[1].getElementsByTagName("img")[0].src = getURL(ret.image);
+    });
+    // EEL: Draw Histogram of Gaussian White Noise
+    eel.show_histogram("gaussianW", "histGW")(ret => {
+        if (!ret.success)
+            alert(ret.message);
+        else
+            box[2].getElementsByTagName("img")[0].src = getURL(ret.image);
+    });
+});
