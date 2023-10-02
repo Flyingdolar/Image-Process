@@ -16,21 +16,20 @@
         <div class="functions-container">
             <div class="functions">
                 <button class="primaryBtn" id="importBtn">匯入圖片</button>
-                <button class="normalBtn" id="featureBtn1">旋轉圖片</button>
-                <button class="normalBtn" id="featureBtn2">生成直方圖</button>
-                <div class="dropDown">
-                    <button class="normalBtn" id="featureBtn3">
+                <button class="normalBtn" id="rotateBtn">旋轉圖片</button>
+                <button class="normalBtn" id="histBtn">生成直方圖</button>
+                <div class="dropDown" id="noiseDrop">
+                    <button class="normalBtn" id="noiseBtn">
                         <div>產生雜訊</div>
                         <div class="arrow"></div>
                     </button>
-                    <div class="section">
-                        <button class="normalCase" id="noiseBtn1">高斯雜訊</button>
-                        <button class="normalCase" id="noiseBtn2">椒鹽雜訊</button>
+                    <div class="section" id="noiseSect">
+                        <button class="normalCase" id="gwNoiseBtn">高斯雜訊</button>
+                        <button class="normalCase" id="psNoiseBtn">椒鹽雜訊</button>
                     </div>
                 </div>
             </div>
         </div>
-
         <!-- Image Grid -->
         <div class="grid-container">
             <div class="grid">
@@ -68,8 +67,6 @@
                 </div>
             </div>
         </div>
-
-
         <!-- Hidden File Input -->
         <input type="file" id="fileInput" accept="*" style="display: none;">
     </div>

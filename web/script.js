@@ -1,16 +1,18 @@
 // File Input
-const importBtn = document.getElementById("importBtn");
 const fileInput = document.getElementById("fileInput");
 // Feature Buttons
-const feat1 = document.getElementById("featureBtn1");
-const feat2 = document.getElementById("featureBtn2");
-const feat3 = document.getElementsByClassName("dropDown")[0];
-const feat3_1 = document.getElementById("noiseBtn1");
-const feat3_2 = document.getElementById("noiseBtn2");
+const importBtn = document.getElementById("importBtn");
+const rotateBtn = document.getElementById("rotateBtn");
+const histBtn = document.getElementById("histBtn");
+const gwNoiseBtn = document.getElementById("gwNoiseBtn");
+const psNoiseBtn = document.getElementById("psNoiseBtn");
 // Image Boxs
 const box = document.getElementsByClassName("image-box");
-// Section
-var section = document.getElementsByClassName("section")[0];
+// Dropdown & Section
+const noiseDrop = document.getElementById("noiseDrop");
+const noiseSect = document.getElementById("noiseSect");
+
+// Variables
 var lastAction = "none";
 
 // Works that need to be done when the page is loaded
@@ -48,6 +50,10 @@ function getURL(base64) {
     var url = URL.createObjectURL(blob);
     return url;
 }
+// -- 4. Get Box Image
+function boxImg(boxNum) {
+    return box[boxNum].getElementsByTagName("img")[0];
+}
 
 // TODO: Homework 0 - Import Image
 importBtn.addEventListener("click", () => {
@@ -68,7 +74,7 @@ fileInput.addEventListener("change", (event) => {
                 if (!ret.success)
                     alert(ret.message);
                 else
-                    box[0].getElementsByTagName("img")[0].src = getURL(ret.image);
+                    boxImg(0).src = getURL(ret.image);
                 console.log(ret.success);
             });
         };
@@ -77,7 +83,7 @@ fileInput.addEventListener("change", (event) => {
 });
 
 // TODO: Homework 1 - Rotate Image
-feat1.addEventListener("click", () => {
+rotateBtn.addEventListener("click", () => {
     var imgIn = lastAction == "rotate" ? "rotate" : "origin";
     // Setup visibilities
     closeAll(), openBoxs(1);
@@ -87,12 +93,12 @@ feat1.addEventListener("click", () => {
         if (!ret.success)
             alert(ret.message);
         else
-            box[1].getElementsByTagName("img")[0].src = getURL(ret.image);
+            boxImg(1).src = getURL(ret.image);
     });
 });
 
 // TODO: Homework 2 - Show Histogram
-feat2.addEventListener("click", () => {
+histBtn.addEventListener("click", () => {
     // Setup visibilities
     closeAll(), openBoxs(1);
     lastAction = "hist";
@@ -101,19 +107,20 @@ feat2.addEventListener("click", () => {
         if (!ret.success)
             alert(ret.message);
         else
-            box[1].getElementsByTagName("img")[0].src = getURL(ret.image);
+            boxImg(1).src = getURL(ret.image);
     });
 });
 
-feat3.addEventListener("mouseover", () => {
-    document.getElementsByClassName("section")[0].style.display = "flex";
+// ? Noise Drop Down
+noiseDrop.addEventListener("mouseover", () => {
+    noiseSect.style.display = "flex";
 });
-feat3.addEventListener("mouseout", () => {
-    document.getElementsByClassName("section")[0].style.display = "none";
+noiseDrop.addEventListener("mouseout", () => {
+    noiseSect.style.display = "none";
 });
 
 // TODO: Homework 3 - Add Noise - Gaussian White Noise
-feat3_1.addEventListener("click", () => {
+gwNoiseBtn.addEventListener("click", () => {
     // Setup visibilities
     closeAll(), openBoxs(2);
     lastAction = "noise-gaussian";
@@ -122,13 +129,13 @@ feat3_1.addEventListener("click", () => {
         if (!ret.success)
             alert(ret.message);
         else
-            box[1].getElementsByTagName("img")[0].src = getURL(ret.image);
+            boxImg(1).src = getURL(ret.image);
     });
     // EEL: Draw Histogram of Gaussian White Noise
     eel.show_histogram("gaussianW", "histGW")(ret => {
         if (!ret.success)
             alert(ret.message);
         else
-            box[2].getElementsByTagName("img")[0].src = getURL(ret.image);
+            boxImg(2).src = getURL(ret.image);
     });
 });
