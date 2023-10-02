@@ -1,16 +1,23 @@
-// File Input
+// Input
 const fileInput = document.getElementById("fileInput");
-// Feature Buttons
+const gwNoiseVar = document.getElementById("gwVariance");
+const saltPepperRate = document.getElementById("spRatio");
+// Buttons
 const importBtn = document.getElementById("importBtn");
 const rotateBtn = document.getElementById("rotateBtn");
 const histBtn = document.getElementById("histBtn");
 const gwNoiseBtn = document.getElementById("gwNoiseBtn");
-const psNoiseBtn = document.getElementById("psNoiseBtn");
+const spNoiseBtn = document.getElementById("spNoiseBtn");
+const gwNoiseConfirm = document.getElementById("gwNoiseConfirm");
+const spNoiseConfirm = document.getElementById("spNoiseConfirm");
 // Image Boxs
 const box = document.getElementsByClassName("image-box");
 // Dropdown & Section
 const noiseDrop = document.getElementById("noiseDrop");
 const noiseSect = document.getElementById("noiseSect");
+// Dialog
+const gwNoiseDialog = document.getElementById("gaussianWNoise");
+const spNoiseDialog = document.getElementById("saltPepperNoise");
 
 // Variables
 var lastAction = "none";
@@ -121,11 +128,20 @@ noiseDrop.addEventListener("mouseout", () => {
 
 // TODO: Homework 3 - Add Noise - Gaussian White Noise
 gwNoiseBtn.addEventListener("click", () => {
+    gwNoiseDialog.showModal();
+});
+gwNoiseConfirm.addEventListener("click", () => {
     // Setup visibilities
+    gwNoiseDialog.close();
     closeAll(), openBoxs(2);
+    var gwVar = gwNoiseVar.value;
+    if (!Number.isInteger(Number(gwVar))) {
+        alert("Variance must be an integer.");
+        return;
+    }
     lastAction = "noise-gaussian";
     // EEL: Add Noise - Gaussian White Noise
-    eel.gen_GaussianW_noise("origin", "gaussianW", 127, 10)(ret => {
+    eel.gen_GaussianW_noise("origin", "gaussianW", 127, gwVar)(ret => {
         if (!ret.success)
             alert(ret.message);
         else

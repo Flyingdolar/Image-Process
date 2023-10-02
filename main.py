@@ -133,6 +133,8 @@ def gen_GaussianW_noise(imgName_in, imgName_save, mean, sigma):
             "image": None,
             "message": "Image Not Found in: " + set_path(imgName_in),
         }
+    mean = float(mean)
+    sigma = float(sigma)
     height, width = img.shape[:2]
     resol = height * width
     # Create 1D zero Array base on resolution, then reshape to 2D with height and width
