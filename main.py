@@ -148,8 +148,10 @@ def gen_GaussianW_noise(imgName_in, imgName_save, mean, sigma):
             break
         r1 = np.random.uniform(0, 1)
         r2 = np.random.uniform(0, 1)
-        p1 = np.sqrt(-2 * np.log(r1)) * np.cos(2 * np.pi * r2) * sigma + mean
-        p2 = np.sqrt(-2 * np.log(r1)) * np.sin(2 * np.pi * r2) * sigma + mean
+        r1 = np.sqrt(-2 * np.log(r1)) * sigma
+        r2 = 2 * np.pi * r2
+        p1 = int(r1 * np.cos(r2)) + mean
+        p2 = int(r1 * np.sin(r2)) + mean
         noise[idx] = check_overflow(p1, 255)
         noise[idx + 1] = check_overflow(p2, 255)
 
