@@ -114,7 +114,7 @@ def show_histogram(imgName_in, imgName_save):
             "message": "Image Not Found in: " + set_path(imgName_in),
         }
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    plt.hist(img.ravel(), 100, [0, 255])
+    plt.hist(img.ravel(), 256, [0, 255])
     plt.title("Histogram")
     plt.xlabel("Intensity"), plt.ylabel("Frequency")
     plt.savefig(set_path(imgName_save)), plt.close()
