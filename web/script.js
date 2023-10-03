@@ -1,3 +1,5 @@
+// Loading Spinner
+const loading = document.getElementById("loadSpin");
 // Input
 const fileInput = document.getElementById("fileInput");
 const gwNoiseVar = document.getElementById("gwVariance");
@@ -21,12 +23,6 @@ const spNoiseDialog = document.getElementById("saltPepperNoise");
 
 // Variables
 var lastAction = "none";
-
-// Works that need to be done when the page is loaded
-window.onload = () => {
-    // Close All Boxes and Images
-    closeAll();
-}
 
 // ** Some Useful Functions **
 // -- 1. Close All Boxes and Images
@@ -61,6 +57,21 @@ function getURL(base64) {
 function boxImg(boxNum) {
     return box[boxNum].getElementsByTagName("img")[0];
 }
+// -- 5. isLoading
+function isLoading(state) {
+    if (state == true)
+        loading.style.display = "block";
+    else
+        loading.style.display = "none";
+}
+// ** End of Functions **
+
+// ! Works that need to be done when the page is loaded
+window.onload = () => {
+    // Close All Boxes and Images
+    closeAll();
+    isLoading(false);
+}
 
 // TODO: Homework 0 - Import Image
 importBtn.addEventListener("click", () => {
@@ -75,9 +86,10 @@ fileInput.addEventListener("change", (event) => {
         const reader = new FileReader();
         reader.onload = (event) => {
             var url = event.target.result;
-
+            isLoading(true);
             // EEL: Import Image
             eel.import_image("origin", url)(ret => {
+                isLoading(false);
                 if (!ret.success)
                     alert(ret.message);
                 else
@@ -90,13 +102,15 @@ fileInput.addEventListener("change", (event) => {
 });
 
 // TODO: Homework 1 - Rotate Image
-rotateBtn.addEventListener("click", () => {
+rotateBtn.addEventListener("click", async () => {
     var imgIn = lastAction == "rotate" ? "rotate" : "origin";
+    isLoading(true);
     // Setup visibilities
     closeAll(), openBoxs(1);
     lastAction = "rotate";
     // EEL: Rotate Image
-    eel.rotate_image(imgIn, "rotate", 30)(ret => {
+    await eel.rotate_image(imgIn, "rotate", 30)(ret => {
+        isLoading(false);
         if (!ret.success)
             alert(ret.message);
         else
@@ -105,12 +119,14 @@ rotateBtn.addEventListener("click", () => {
 });
 
 // TODO: Homework 2 - Show Histogram
-histBtn.addEventListener("click", () => {
+histBtn.addEventListener("click", async () => {
     // Setup visibilities
+    isLoading(true);
     closeAll(), openBoxs(1);
     lastAction = "hist";
     // EEL: Show Histogram
-    eel.show_histogram("origin", "hist")(ret => {
+    await eel.show_histogram("origin", "hist")(ret => {
+        isLoading(false);
         if (!ret.success)
             alert(ret.message);
         else
@@ -130,7 +146,7 @@ noiseDrop.addEventListener("mouseout", () => {
 gwNoiseBtn.addEventListener("click", () => {
     gwNoiseDialog.showModal();
 });
-gwNoiseConfirm.addEventListener("click", () => {
+gwNoiseConfirm.addEventListener("click", async () => {
     // Setup visibilities
     gwNoiseDialog.close();
     closeAll(), openBoxs(2);
@@ -140,18 +156,24 @@ gwNoiseConfirm.addEventListener("click", () => {
         return;
     }
     lastAction = "noise-gaussian";
+    isLoading(true);
     // EEL: Add Noise - Gaussian White Noise
-    eel.gen_GaussianW_noise("origin", "gaussianW", 127, gwVar)(ret => {
-        if (!ret.success)
+    await eel.gen_GaussianW_noise("origin", "gaussianW", 127, gwVar)(ret => {
+        isLoading(false);
+        if (!ret.success) {
             alert(ret.message);
-        else
+            boxImg(1).src = "";
+        } else
             boxImg(1).src = getURL(ret.image);
     });
+    isLoading(true);
     // EEL: Draw Histogram of Gaussian White Noise
-    eel.show_histogram("gaussianW", "histGW")(ret => {
-        if (!ret.success)
+    await eel.show_histogram("gaussianW", "histGW")(ret => {
+        isLoading(false);
+        if (!ret.success) {
             alert(ret.message);
-        else
+            boxImg(2).src = "";
+        } else
             boxImg(2).src = getURL(ret.image);
     });
 });
