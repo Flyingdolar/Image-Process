@@ -39,14 +39,29 @@ An Application that allows to do several image processing operations on images.
 - Clone the repository using the following command:
 
   ```bash
-  git clone http://example.com
+  git clone https://github.com/Flyingdolar/Image-Process.git
   ```
 
 - Build the application using the following command:
 
-  ```bash
-  python -m eel main.py web --onefile --noconsole --hidden-import=queue -F -w
-  ```
+1. On MacOS or Linux
+
+    ```bash
+    python -m eel main.py web --onefile --noconsole --hidden-import=queue -F -w
+    ```
+
+    - `-F` is for one file
+    - `-w` is for windowed mode
+    - `--noconsole` is for hiding the console
+    - `--hidden-import=queue` is for fixing a bug on MacOS and Linux.
+
+2. On Windows
+
+    ```bash
+    python -m eel main.py web --onefile
+    ```
+
+    - `--onefile` is for one file
 
 - The executable file will be in the `dist` folder.
 
