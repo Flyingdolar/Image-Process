@@ -1,7 +1,9 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-import base64, eel, os
+import base64
+import eel
+import os
 
 # Set web files folder
 eel.init("web")
@@ -40,7 +42,7 @@ def check_overflow(value, limit):
     elif value < 0:
         return 0
     else:
-        return value
+        return int(value)
 
 
 # TODO Homework 0-1: Import Image
@@ -123,7 +125,7 @@ def show_histogram(imgName_in, imgName_save):
     }
 
 
-# TODO Homework 3: Add Noise -- Gaussian White Noise
+# TODO Homework 3-1: Add Noise -- Gaussian White Noise
 @eel.expose
 def gen_GaussianW_noise(imgName_in, imgName_save, mean, sigma):
     img = cv2.imread(set_path(imgName_in))
@@ -141,6 +143,9 @@ def gen_GaussianW_noise(imgName_in, imgName_save, mean, sigma):
     noise = np.zeros(resol)
     # Create a for loop jump by 2
     for idx in range(0, resol, 2):
+        if idx == resol - 1:
+            noise[idx] = mean
+            break
         r1 = np.random.uniform(0, 1)
         r2 = np.random.uniform(0, 1)
         p1 = np.sqrt(-2 * np.log(r1)) * np.cos(2 * np.pi * r2) * sigma + mean
@@ -158,7 +163,7 @@ def gen_GaussianW_noise(imgName_in, imgName_save, mean, sigma):
     }
 
 
-# TODO Homework 3: Add Noise -- Salt and Pepper Noise
+# TODO Homework 3-2: Add Noise -- Salt and Pepper Noise
 @eel.expose
 def gen_SaltPepper_noise(imgName_save, prob):
     img = np.random.uniform(0, 1, (512, 512))
