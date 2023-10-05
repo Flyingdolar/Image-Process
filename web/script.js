@@ -172,8 +172,20 @@ gwNoiseConfirm.addEventListener("click", async () => {
         isLoading(false);
         if (!ret.success) {
             alert(ret.message);
-            boxImg(2).src = "";
+            boxImg(4).src = "";
         } else
-            boxImg(2).src = getURL(ret.image);
+            boxImg(4).src = getURL(ret.image);
     });
+    // EEL: Draw Histogram of original image
+    await eel.show_histogram("origin", "hist")(ret => {
+        if (!ret.success) {
+            alert(ret.message);
+            boxImg(3).src = "";
+        } else
+            boxImg(3).src = getURL(ret.image);
+    });
+    // EEL: Add Noise to original image
+    // await eel.add_img("origin", "gaussianW", "noiseGW", -127) {
+
+    // }
 });
