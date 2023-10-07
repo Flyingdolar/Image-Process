@@ -156,6 +156,7 @@ def gen_GaussianW_noise(imgName_in, imgName_save, mean, sigma):
         noise[idx + 1] = check_overflow(p2, 255)
 
     noise = noise.reshape(height, width)
+    noise = cv2.cvtColor(noise, cv2.COLOR_GRAY2RGB)
     # Output Noise Image
     cv2.imwrite(set_path(imgName_save), noise)
     return {
@@ -180,5 +181,41 @@ def gen_SaltPepper_noise(imgName_save, prob):
     }
 
 
+# TODO Homework 3-3: Mix Image with Noise
+@eel.expose
+def mix_img(imgName_in, imgName_add, imgName_save, bias):
+    img1 = cv2.imread(set_path(imgName_in))
+    img2 = cv2.imread(set_path(imgName_add))
+    # Read & Check Image with same size
+    if img1 is None or img2 is None:
+        return {
+            "success": False,
+            "image": None,
+            "message": "Image Not Found in: "
+            + set_path(imgName_in)
+            + " or "
+            + set_path(imgName_add),
+        }
+    elif img1.shape != img2.shape:
+        return {
+            "success": False,
+            "image": None,
+            "message": "Image Size Not Match",
+        }
+    # Mix Image
+    img1 = img1.astype(np.uint32)
+    img2 = img2.astype(np.uint32)
+    img = img1 + img2 - bias
+    img = np.clip(img, 0, 255)
+    img = img.astype(np.uint8)
+    # Output Image
+    cv2.imwrite(set_path(imgName_save), img)
+    return {
+        "success": True,
+        "image": encode_base64(img),
+        "message": "Image is Saved at: " + set_path(imgName_save),
+    }
+
+
 # Start up Window & Set Window Size
-eel.start("index.html", size=(650, 550))
+eel.start("index.html", size=(1000, 800))
