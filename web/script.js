@@ -149,7 +149,7 @@ gwNoiseBtn.addEventListener("click", () => {
 gwNoiseConfirm.addEventListener("click", async () => {
     // Setup visibilities
     gwNoiseDialog.close();
-    closeAll(), openBoxs(2);
+    closeAll(), openBoxs(5);
     var gwVar = gwNoiseVar.value;
     if (!Number.isInteger(Number(gwVar))) {
         alert("Variance must be an integer.");
@@ -158,7 +158,7 @@ gwNoiseConfirm.addEventListener("click", async () => {
     lastAction = "noise-gaussian";
     isLoading(true);
     // EEL: Add Noise - Gaussian White Noise
-    await eel.gen_GaussianW_noise("origin", "gaussianW", 127, gwVar)(ret => {
+    await eel.gen_GaussianW_noise("origin", "noiseGW", 127, gwVar)(ret => {
         isLoading(false);
         if (!ret.success) {
             alert(ret.message);
@@ -168,7 +168,7 @@ gwNoiseConfirm.addEventListener("click", async () => {
     });
     isLoading(true);
     // EEL: Draw Histogram of Gaussian White Noise
-    await eel.show_histogram("gaussianW", "histGW")(ret => {
+    await eel.show_histogram("noiseGW", "histGW")(ret => {
         isLoading(false);
         if (!ret.success) {
             alert(ret.message);
@@ -185,7 +185,19 @@ gwNoiseConfirm.addEventListener("click", async () => {
             boxImg(3).src = getURL(ret.image);
     });
     // EEL: Add Noise to original image
-    // await eel.add_img("origin", "gaussianW", "noiseGW", -127) {
-
-    // }
+    await eel.mix_img("origin", "noiseGW", "mixGW", -127)(ret => {
+        if (!ret.success) {
+            alert(ret.message);
+            boxImg(2).src = "";
+        } else
+            boxImg(2).src = getURL(ret.image);
+    });
+    // EEL: Draw Histogram of mixed image
+    await eel.show_histogram("mixGW", "histMixGW")(ret => {
+        if (!ret.success) {
+            alert(ret.message);
+            boxImg(5).src = "";
+        } else
+            boxImg(5).src = getURL(ret.image);
+    });
 });
