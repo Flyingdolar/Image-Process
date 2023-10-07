@@ -15,7 +15,7 @@ if not os.path.exists("img"):
 
 # Set path for fileName
 def set_path(fileName):
-    return "img/" + fileName + ".jpg"
+    return "img/" + fileName + ".bmp"
 
 
 # Transform base64 to image
@@ -30,7 +30,7 @@ def decode_base64(data):
 
 # Transform image to base64
 def encode_base64(img):
-    _, buffer = cv2.imencode(".jpg", img)
+    _, buffer = cv2.imencode(".bmp", img)
     b64Data = base64.b64encode(buffer)
     return b64Data.decode()
 
@@ -117,7 +117,11 @@ def show_histogram(imgName_in, imgName_save):
     plt.hist(img.ravel(), 256, [0, 255])
     plt.title("Histogram")
     plt.xlabel("Intensity"), plt.ylabel("Frequency")
-    plt.savefig(set_path(imgName_save)), plt.close()
+    plt.savefig("img/" + imgName_save + ".jpg"), plt.close()
+    plot = cv2.imread("img/" + imgName_save + ".jpg")
+    cv2.imwrite(set_path(imgName_save), plot)
+    # Remove .jpg file
+    os.remove("img/" + imgName_save + ".jpg")
     return {
         "success": True,
         "image": encode_base64(cv2.imread(set_path(imgName_save))),
@@ -167,22 +171,40 @@ def gen_GaussianW_noise(imgName_in, imgName_save, mean, sigma):
 
 # TODO Homework 3-2: Add Noise -- Salt and Pepper Noise
 @eel.expose
-def gen_SaltPepper_noise(imgName_save, prob):
-    img = np.random.uniform(0, 1, (512, 512))
-    img = img.astype(np.uint8)
-    img[img < prob] = 0
-    img[img > 1 - prob] = 255
-    cv2.imwrite(set_path(imgName_save), img)
+def gen_SaltPepper_noise(imgName_in, imgName_save, edge):
+    img = cv2.imread(set_path(imgName_in))
+    if img is None:
+        return {
+            "success": False,
+            "image": None,
+            "message": "Image Not Found in: " + set_path(imgName_in),
+        }
+    edge = float(edge)
+    height, width = img.shape[:2]
+    resol = height * width
+    # Set the image with all pixel to 127
+    noise = np.full(resol, 127)
+    low = int(edge * 255)
+    high = 255 - low
+    for pixel in range(resol):
+        r = np.random.randint(0, 255)
+        if r <= low:
+            noise[pixel] = 0
+        elif r >= high:
+            noise[pixel] = 255
+    noise = noise.reshape(height, width)
+    # Output Noise Image
+    cv2.imwrite(set_path(imgName_save), noise)
     return {
         "success": True,
-        "image": encode_base64(img),
+        "image": encode_base64(noise),
         "message": "Salt and Pepper Noise is Saved at: " + set_path(imgName_save),
     }
 
 
 # TODO Homework 3-3: Mix Image with Noise
 @eel.expose
-def mix_img(imgName_in, imgName_add, imgName_save, offset):
+def mix_img(imgName_in, imgName_add, imgName_save, offset, isCover):
     img1 = cv2.imread(set_path(imgName_in))
     img2 = cv2.imread(set_path(imgName_add))
     # Read & Check Image with same size
@@ -201,12 +223,21 @@ def mix_img(imgName_in, imgName_add, imgName_save, offset):
             "image": None,
             "message": "Image Size Not Match",
         }
-    # Mix Image
-    img1 = img1.astype(np.uint32)
-    img2 = img2.astype(np.uint32)
-    img = img1 + img2 + offset
-    img = np.clip(img, 0, 255)
-    img = img.astype(np.uint8)
+    if isCover:
+        # Cover Image
+        img = img1
+        img2 = img2.astype(np.int32)
+        for row in range(img2.shape[0]):
+            for col in range(img2.shape[1]):
+                if img2[row][col][0] + offset != 0:
+                    img[row][col] = img2[row][col]
+    else:
+        # Mix Image
+        img1 = img1.astype(np.int32)
+        img2 = img2.astype(np.int32)
+        img = img1 + (img2 + offset)
+        img = np.clip(img, 0, 255)
+        img = img.astype(np.uint8)
     # Output Image
     cv2.imwrite(set_path(imgName_save), img)
     return {

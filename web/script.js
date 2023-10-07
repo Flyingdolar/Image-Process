@@ -185,7 +185,7 @@ gwNoiseConfirm.addEventListener("click", async () => {
             boxImg(3).src = getURL(ret.image);
     });
     // EEL: Add Noise to original image
-    await eel.mix_img("origin", "noiseGW", "mixGW", -127)(ret => {
+    await eel.mix_img("origin", "noiseGW", "mixGW", -127, false)(ret => {
         if (!ret.success) {
             alert(ret.message);
             boxImg(2).src = "";
@@ -194,6 +194,66 @@ gwNoiseConfirm.addEventListener("click", async () => {
     });
     // EEL: Draw Histogram of mixed image
     await eel.show_histogram("mixGW", "histMixGW")(ret => {
+        if (!ret.success) {
+            alert(ret.message);
+            boxImg(5).src = "";
+        } else
+            boxImg(5).src = getURL(ret.image);
+    });
+});
+
+// TODO: Homework 3 - Add Noise - Salt and Pepper Noise
+spNoiseBtn.addEventListener("click", () => {
+    spNoiseDialog.showModal();
+});
+spNoiseConfirm.addEventListener("click", async () => {
+    // Setup visibilities
+    spNoiseDialog.close();
+    closeAll(), openBoxs(5);
+    var spRate = saltPepperRate.value;
+    if (spRate > 0.5 || spRate < 0) {
+        alert("Illegal ratio.");
+        return;
+    }
+    lastAction = "noise-sp";
+    isLoading(true);
+    // EEL: Add Noise - Salt and Pepper Noise
+    await eel.gen_SaltPepper_noise("origin", "noiseSP", spRate)(ret => {
+        isLoading(false);
+        if (!ret.success) {
+            alert(ret.message);
+            boxImg(1).src = "";
+        } else
+            boxImg(1).src = getURL(ret.image);
+    });
+    isLoading(true);
+    // EEL: Draw Histogram of Salt and Pepper Noise
+    await eel.show_histogram("noiseSP", "histSP")(ret => {
+        isLoading(false);
+        if (!ret.success) {
+            alert(ret.message);
+            boxImg(4).src = "";
+        } else
+            boxImg(4).src = getURL(ret.image);
+    });
+    // EEL: Draw Histogram of original image
+    await eel.show_histogram("origin", "hist")(ret => {
+        if (!ret.success) {
+            alert(ret.message);
+            boxImg(3).src = "";
+        } else
+            boxImg(3).src = getURL(ret.image);
+    });
+    // EEL: Add Noise to original image
+    await eel.mix_img("origin", "noiseSP", "mixSP", -127, true)(ret => {
+        if (!ret.success) {
+            alert(ret.message);
+            boxImg(2).src = "";
+        } else
+            boxImg(2).src = getURL(ret.image);
+    });
+    // EEL: Draw Histogram of mixed image
+    await eel.show_histogram("mixSP", "histMixSP")(ret => {
         if (!ret.success) {
             alert(ret.message);
             boxImg(5).src = "";
