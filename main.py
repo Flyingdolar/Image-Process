@@ -118,6 +118,7 @@ def show_histogram(imgName_in, imgName_save):
     plt.title("Histogram")
     plt.xlabel("Intensity"), plt.ylabel("Frequency")
     plt.savefig(set_path(imgName_save))
+    plt.clf()  # Clear Figure
     return {
         "success": True,
         "image": encode_base64(cv2.imread(set_path(imgName_save))),
