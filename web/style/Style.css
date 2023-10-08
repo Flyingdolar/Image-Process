@@ -39,3 +39,18 @@ body {
 input[type="file"] {
     display: none;
 }
+
+.convolution-array {
+    /* If there are 9 children, make it 3x3; else if there are 25 children, make it 5x5; ... */
+    grid-template-columns: repeat(auto-fill, minmax(32px, 1fr));
+    grid-template-rows: repeat(auto-fill, minmax(32px, 1fr));
+    gap: 2px;
+    padding: 2px;
+    border: 1px solid #000000;
+    border-radius: 8px;
+}
+
+.convMatrix3, .convMatrix5, .convMatrix7 {
+    display: inline;
+}
+

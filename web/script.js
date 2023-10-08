@@ -5,16 +5,22 @@ const fileInput = document.getElementById("fileInput");
 const rotateAngle = document.getElementById("rotateAngle");
 const gwNoiseVar = document.getElementById("gwVariance");
 const saltPepperRate = document.getElementById("spRatio");
+const convMatrix3 = document.getElementsByClassName("convMatrix3");
+const convMatrix5 = document.getElementsByClassName("convMatrix5");
+const convMatrix7 = document.getElementsByClassName("convMatrix7");
 // Buttons
 const importBtn = document.getElementById("importBtn");
 const rotateBtn = document.getElementById("rotateBtn");
 const histBtn = document.getElementById("histBtn");
 const gwNoiseBtn = document.getElementById("gwNoiseBtn");
 const spNoiseBtn = document.getElementById("spNoiseBtn");
+const convBtn = document.getElementById("convBtn");
 // Confirm Buttons
 const rotateConfirm = document.getElementById("rotateConfirm");
 const gwNoiseConfirm = document.getElementById("gwNoiseConfirm");
 const spNoiseConfirm = document.getElementById("spNoiseConfirm");
+const convSizeConfirm = document.getElementById("convSizeConfirm");
+const convConfirm = document.getElementById("convConfirm");
 // Image Boxs
 const box = document.getElementsByClassName("image-box");
 // Dropdown & Section
@@ -24,6 +30,8 @@ const noiseSect = document.getElementById("noiseSect");
 const rotateDialog = document.getElementById("rotateDialog");
 const gwNoiseDialog = document.getElementById("gaussianWNoise");
 const spNoiseDialog = document.getElementById("saltPepperNoise");
+const convSizeDialog = document.getElementById("convSizeDialog");
+const convDialog = document.getElementById("convDialog");
 
 // Variables
 var lastAction = "none";
@@ -77,7 +85,7 @@ window.onload = () => {
     isLoading(false);
 }
 
-// DONE: Homework 0 - Import Image
+// [v]: Homework 0 - Import Image
 importBtn.addEventListener("click", () => {
     fileInput.click();  // Redirect Import Button Click to File Input
 });
@@ -105,7 +113,7 @@ fileInput.addEventListener("change", (event) => {
     }
 });
 
-// DONE: Homework 1 - Rotate Image
+// [v]: Homework 1 - Rotate Image
 rotateBtn.addEventListener("click", () => {
     rotateDialog.showModal();
 });
@@ -132,7 +140,7 @@ rotateConfirm.addEventListener("click", async () => {
     });
 });
 
-// DONE: Homework 2 - Show Histogram
+// [v]: Homework 2 - Show Histogram
 histBtn.addEventListener("click", async () => {
     // Setup visibilities
     isLoading(true);
@@ -148,7 +156,7 @@ histBtn.addEventListener("click", async () => {
     });
 });
 
-// DONE: Noise Drop Down
+// [v]: Noise Drop Down
 noiseDrop.addEventListener("mouseover", () => {
     noiseSect.style.display = "flex";
 });
@@ -156,7 +164,7 @@ noiseDrop.addEventListener("mouseout", () => {
     noiseSect.style.display = "none";
 });
 
-// DONE: Homework 3 - Add Noise - Gaussian White Noise
+// [v]: Homework 3 - Add Noise - Gaussian White Noise
 gwNoiseBtn.addEventListener("click", () => {
     gwNoiseDialog.showModal();
 });
@@ -222,7 +230,7 @@ gwNoiseConfirm.addEventListener("click", async () => {
     });
 });
 
-// DONE: Homework 3 - Add Noise - Salt and Pepper Noise
+// [v]: Homework 3 - Add Noise - Salt and Pepper Noise
 spNoiseBtn.addEventListener("click", () => {
     spNoiseDialog.showModal();
 });
@@ -287,4 +295,71 @@ spNoiseConfirm.addEventListener("click", async () => {
         } else
             boxImg(5).src = getURL(ret.image);
     });
+});
+
+// [ ] Homework 4 - Convolution
+convBtn.addEventListener("click", () => {
+    convSizeDialog.showModal();
+    // Set All Matrix Invisible
+    for (var i = 0; i < convMatrix3.length; i++)
+        convMatrix3[i].style.display = "none";
+    for (var i = 0; i < convMatrix5.length; i++)
+        convMatrix5[i].style.display = "none";
+    for (var i = 0; i < convMatrix7.length; i++)
+        convMatrix7[i].style.display = "none";
+});
+convSizeConfirm.addEventListener("click", () => {
+    convSizeDialog.close();
+    convDialog.showModal();
+    // Set Matrix Visible
+    var size = parseInt(document.querySelector('input[name="convSize"]:checked').value);
+    if (size == 3) {
+        for (var i = 0; i < convMatrix3.length; i++)
+            convMatrix3[i].style.display = "inline";
+    } else if (size == 5) {
+        for (var i = 0; i < convMatrix5.length; i++)
+            convMatrix5[i].style.display = "inline";
+    } else if (size == 7) {
+        for (var i = 0; i < convMatrix7.length; i++)
+            convMatrix7[i].style.display = "inline";
+    }
+});
+convConfirm.addEventListener("click", () => {
+    // Setup visibilities
+    convDialog.close();
+    closeAll(), openBoxs(2);
+    lastAction = "conv";
+
+    var size = convSize.value;
+    var matrix = [];
+    if (size == 3) {
+        for (var i = 0; i < convMatrix3.length; i++)
+            matrix.push(convMatrix3[i].value);
+    } else if (size == 5) {
+        for (var i = 0; i < convMatrix5.length; i++)
+            matrix.push(convMatrix5[i].value);
+    } else if (size == 7) {
+        for (var i = 0; i < convMatrix7.length; i++)
+            matrix.push(convMatrix7[i].value);
+    }
+    // isLoading(true);
+    // // EEL: Convolution
+    // await eel.convolution("origin", "conv", 3)(ret => {
+    //     isLoading(false);
+    //     if (!ret.success) {
+    //         alert(ret.message);
+    //         boxImg(1).src = "";
+    //     } else
+    //         boxImg(1).src = getURL(ret.image);
+    // });
+    // isLoading(true);
+    // // EEL: Draw Histogram of convoluted image
+    // await eel.show_histogram("conv", "histConv")(ret => {
+    //     isLoading(false);
+    //     if (!ret.success) {
+    //         alert(ret.message);
+    //         boxImg(2).src = "";
+    //     } else
+    //         boxImg(2).src = getURL(ret.image);
+    // });
 });
