@@ -2,6 +2,7 @@
 const loading = document.getElementById("loadSpin");
 // Input
 const fileInput = document.getElementById("fileInput");
+const rotateAngle = document.getElementById("rotateAngle");
 const gwNoiseVar = document.getElementById("gwVariance");
 const saltPepperRate = document.getElementById("spRatio");
 // Buttons
@@ -10,6 +11,8 @@ const rotateBtn = document.getElementById("rotateBtn");
 const histBtn = document.getElementById("histBtn");
 const gwNoiseBtn = document.getElementById("gwNoiseBtn");
 const spNoiseBtn = document.getElementById("spNoiseBtn");
+// Confirm Buttons
+const rotateConfirm = document.getElementById("rotateConfirm");
 const gwNoiseConfirm = document.getElementById("gwNoiseConfirm");
 const spNoiseConfirm = document.getElementById("spNoiseConfirm");
 // Image Boxs
@@ -18,6 +21,7 @@ const box = document.getElementsByClassName("image-box");
 const noiseDrop = document.getElementById("noiseDrop");
 const noiseSect = document.getElementById("noiseSect");
 // Dialog
+const rotateDialog = document.getElementById("rotateDialog");
 const gwNoiseDialog = document.getElementById("gaussianWNoise");
 const spNoiseDialog = document.getElementById("saltPepperNoise");
 
@@ -73,7 +77,7 @@ window.onload = () => {
     isLoading(false);
 }
 
-// TODO: Homework 0 - Import Image
+// DONE: Homework 0 - Import Image
 importBtn.addEventListener("click", () => {
     fileInput.click();  // Redirect Import Button Click to File Input
 });
@@ -101,15 +105,25 @@ fileInput.addEventListener("change", (event) => {
     }
 });
 
-// TODO: Homework 1 - Rotate Image
-rotateBtn.addEventListener("click", async () => {
-    var imgIn = lastAction == "rotate" ? "rotate" : "origin";
-    isLoading(true);
+// DONE: Homework 1 - Rotate Image
+rotateBtn.addEventListener("click", () => {
+    rotateDialog.showModal();
+});
+rotateConfirm.addEventListener("click", async () => {
     // Setup visibilities
+    rotateDialog.close();
     closeAll(), openBoxs(1);
+    var angle = rotateAngle.value;
+    if (!Number.isInteger(Number(angle))) {
+        alert("Angle must be an integer.");
+        return;
+    }
+    angle = angle % 360;
+    if (angle < 0) angle += 360;
     lastAction = "rotate";
+    isLoading(true);
     // EEL: Rotate Image
-    await eel.rotate_image(imgIn, "rotate", 30)(ret => {
+    await eel.rotate_image("origin", "rotate", angle)(ret => {
         isLoading(false);
         if (!ret.success)
             alert(ret.message);
@@ -118,7 +132,7 @@ rotateBtn.addEventListener("click", async () => {
     });
 });
 
-// TODO: Homework 2 - Show Histogram
+// DONE: Homework 2 - Show Histogram
 histBtn.addEventListener("click", async () => {
     // Setup visibilities
     isLoading(true);
@@ -134,7 +148,7 @@ histBtn.addEventListener("click", async () => {
     });
 });
 
-// ? Noise Drop Down
+// DONE: Noise Drop Down
 noiseDrop.addEventListener("mouseover", () => {
     noiseSect.style.display = "flex";
 });
@@ -142,7 +156,7 @@ noiseDrop.addEventListener("mouseout", () => {
     noiseSect.style.display = "none";
 });
 
-// TODO: Homework 3 - Add Noise - Gaussian White Noise
+// DONE: Homework 3 - Add Noise - Gaussian White Noise
 gwNoiseBtn.addEventListener("click", () => {
     gwNoiseDialog.showModal();
 });
@@ -208,7 +222,7 @@ gwNoiseConfirm.addEventListener("click", async () => {
     });
 });
 
-// TODO: Homework 3 - Add Noise - Salt and Pepper Noise
+// DONE: Homework 3 - Add Noise - Salt and Pepper Noise
 spNoiseBtn.addEventListener("click", () => {
     spNoiseDialog.showModal();
 });

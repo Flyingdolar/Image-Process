@@ -72,6 +72,12 @@
         </div>
         <!-- Hidden File Input -->
         <input type="file" id="fileInput" accept="*" style="display: none;">
+        <!-- Rotate Dialog -->
+        <dialog id="rotateDialog">
+            <div>請輸入旋轉角度</div>
+            <input type="number" id="rotateAngle" value="0" step="1" min="0" max="360">
+            <button class="normalBtn" id="rotateConfirm">確認</button>
+        </dialog>
         <!-- Noise Dialog -->
         <dialog id="gaussianWNoise">
             <div>請輸入變異數</div>
