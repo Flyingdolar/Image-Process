@@ -157,7 +157,7 @@ gwNoiseConfirm.addEventListener("click", async () => {
     }
     lastAction = "noise-gaussian";
     isLoading(true);
-    // EEL: Add Noise - Gaussian White Noise
+    // EEL: Generate Gaussian White Noise
     await eel.gen_GaussianW_noise("origin", "noiseGW", 127, gwVar)(ret => {
         isLoading(false);
         if (!ret.success) {
@@ -165,6 +165,26 @@ gwNoiseConfirm.addEventListener("click", async () => {
             boxImg(1).src = "";
         } else
             boxImg(1).src = getURL(ret.image);
+    });
+    isLoading(true);
+    // EEL: Mix Image
+    await eel.mix_img("origin", "noiseGW", "mixGW", -127, false)(ret => {
+        isLoading(false);
+        if (!ret.success) {
+            alert(ret.message);
+            boxImg(2).src = "";
+        } else
+            boxImg(2).src = getURL(ret.image);
+    });
+    isLoading(true);
+    // EEL: Draw Histogram of original image
+    await eel.show_histogram("origin", "hist")(ret => {
+        isLoading(false);
+        if (!ret.success) {
+            alert(ret.message);
+            boxImg(3).src = "";
+        } else
+            boxImg(3).src = getURL(ret.image);
     });
     isLoading(true);
     // EEL: Draw Histogram of Gaussian White Noise
@@ -176,24 +196,10 @@ gwNoiseConfirm.addEventListener("click", async () => {
         } else
             boxImg(4).src = getURL(ret.image);
     });
-    // EEL: Draw Histogram of original image
-    await eel.show_histogram("origin", "hist")(ret => {
-        if (!ret.success) {
-            alert(ret.message);
-            boxImg(3).src = "";
-        } else
-            boxImg(3).src = getURL(ret.image);
-    });
-    // EEL: Add Noise to original image
-    await eel.mix_img("origin", "noiseGW", "mixGW", -127, false)(ret => {
-        if (!ret.success) {
-            alert(ret.message);
-            boxImg(2).src = "";
-        } else
-            boxImg(2).src = getURL(ret.image);
-    });
+    isLoading(true);
     // EEL: Draw Histogram of mixed image
     await eel.show_histogram("mixGW", "histMixGW")(ret => {
+        isLoading(false);
         if (!ret.success) {
             alert(ret.message);
             boxImg(5).src = "";
@@ -211,10 +217,11 @@ spNoiseConfirm.addEventListener("click", async () => {
     spNoiseDialog.close();
     closeAll(), openBoxs(5);
     var spRate = saltPepperRate.value;
-    if (spRate > 0.5 || spRate < 0) {
+    if (spRate > 50 || spRate < 0) {
         alert("Illegal ratio.");
         return;
     }
+    spRate /= 100;
     lastAction = "noise-sp";
     isLoading(true);
     // EEL: Add Noise - Salt and Pepper Noise
@@ -227,6 +234,26 @@ spNoiseConfirm.addEventListener("click", async () => {
             boxImg(1).src = getURL(ret.image);
     });
     isLoading(true);
+    // EEL: Add Noise to original image
+    await eel.mix_img("origin", "noiseSP", "mixSP", -127, true)(ret => {
+        isLoading(false);
+        if (!ret.success) {
+            alert(ret.message);
+            boxImg(2).src = "";
+        } else
+            boxImg(2).src = getURL(ret.image);
+    });
+    isLoading(true);
+    // EEL: Draw Histogram of original image
+    await eel.show_histogram("origin", "hist")(ret => {
+        isLoading(false);
+        if (!ret.success) {
+            alert(ret.message);
+            boxImg(3).src = "";
+        } else
+            boxImg(3).src = getURL(ret.image);
+    });
+    isLoading(true);
     // EEL: Draw Histogram of Salt and Pepper Noise
     await eel.show_histogram("noiseSP", "histSP")(ret => {
         isLoading(false);
@@ -236,24 +263,10 @@ spNoiseConfirm.addEventListener("click", async () => {
         } else
             boxImg(4).src = getURL(ret.image);
     });
-    // EEL: Draw Histogram of original image
-    await eel.show_histogram("origin", "hist")(ret => {
-        if (!ret.success) {
-            alert(ret.message);
-            boxImg(3).src = "";
-        } else
-            boxImg(3).src = getURL(ret.image);
-    });
-    // EEL: Add Noise to original image
-    await eel.mix_img("origin", "noiseSP", "mixSP", -127, true)(ret => {
-        if (!ret.success) {
-            alert(ret.message);
-            boxImg(2).src = "";
-        } else
-            boxImg(2).src = getURL(ret.image);
-    });
+    isLoading(true);
     // EEL: Draw Histogram of mixed image
     await eel.show_histogram("mixSP", "histMixSP")(ret => {
+        isLoading(false);
         if (!ret.success) {
             alert(ret.message);
             boxImg(5).src = "";
