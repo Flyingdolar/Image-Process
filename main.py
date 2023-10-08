@@ -15,7 +15,7 @@ if not os.path.exists("img"):
 
 # Set path for fileName
 def set_path(fileName):
-    return "img/" + fileName + ".bmp"
+    return "img/" + fileName + ".png"
 
 
 # Transform base64 to image
@@ -30,7 +30,7 @@ def decode_base64(data):
 
 # Transform image to base64
 def encode_base64(img):
-    _, buffer = cv2.imencode(".bmp", img)
+    _, buffer = cv2.imencode(".png", img)
     b64Data = base64.b64encode(buffer)
     return b64Data.decode()
 
@@ -117,11 +117,7 @@ def show_histogram(imgName_in, imgName_save):
     plt.hist(img.ravel(), 256, [0, 255])
     plt.title("Histogram")
     plt.xlabel("Intensity"), plt.ylabel("Frequency")
-    plt.savefig("img/" + imgName_save + ".jpg"), plt.close()
-    plot = cv2.imread("img/" + imgName_save + ".jpg")
-    cv2.imwrite(set_path(imgName_save), plot)
-    # Remove .jpg file
-    os.remove("img/" + imgName_save + ".jpg")
+    plt.savefig(set_path(imgName_save))
     return {
         "success": True,
         "image": encode_base64(cv2.imread(set_path(imgName_save))),
