@@ -190,7 +190,7 @@ gwNoiseConfirm.addEventListener("click", async () => {
     });
     isLoading(true);
     // EEL: Mix Image
-    await eel.mix_img("origin", "noiseGW", "mixGW", -127, false)(ret => {
+    await eel.mix_image("origin", "noiseGW", "mixGW", -127, false)(ret => {
         isLoading(false);
         if (!ret.success) {
             alert(ret.message);
@@ -257,7 +257,7 @@ spNoiseConfirm.addEventListener("click", async () => {
     });
     isLoading(true);
     // EEL: Add Noise to original image
-    await eel.mix_img("origin", "noiseSP", "mixSP", -127, true)(ret => {
+    await eel.mix_image("origin", "noiseSP", "mixSP", -127, true)(ret => {
         isLoading(false);
         if (!ret.success) {
             alert(ret.message);
@@ -324,13 +324,13 @@ convSizeConfirm.addEventListener("click", () => {
             convMatrix7[i].style.display = "inline";
     }
 });
-convConfirm.addEventListener("click", () => {
+convConfirm.addEventListener("click", async () => {
     // Setup visibilities
     convDialog.close();
     closeAll(), openBoxs(2);
     lastAction = "conv";
 
-    var size = convSize.value;
+    var size = parseInt(document.querySelector('input[name="convSize"]:checked').value);
     var matrix = [];
     if (size == 3) {
         for (var i = 0; i < convMatrix3.length; i++)
@@ -342,24 +342,25 @@ convConfirm.addEventListener("click", () => {
         for (var i = 0; i < convMatrix7.length; i++)
             matrix.push(convMatrix7[i].value);
     }
-    // isLoading(true);
-    // // EEL: Convolution
-    // await eel.convolution("origin", "conv", 3)(ret => {
-    //     isLoading(false);
-    //     if (!ret.success) {
-    //         alert(ret.message);
-    //         boxImg(1).src = "";
-    //     } else
-    //         boxImg(1).src = getURL(ret.image);
-    // });
-    // isLoading(true);
-    // // EEL: Draw Histogram of convoluted image
-    // await eel.show_histogram("conv", "histConv")(ret => {
-    //     isLoading(false);
-    //     if (!ret.success) {
-    //         alert(ret.message);
-    //         boxImg(2).src = "";
-    //     } else
-    //         boxImg(2).src = getURL(ret.image);
-    // });
+    console.log(matrix);
+    isLoading(true);
+    // EEL: Convolution
+    await eel.conv_image("origin", "conv", matrix)(ret => {
+        isLoading(false);
+        if (!ret.success) {
+            alert(ret.message);
+            boxImg(1).src = "";
+        } else
+            boxImg(1).src = getURL(ret.image);
+    });
+    isLoading(true);
+    // EEL: Draw Histogram of convoluted image
+    await eel.show_histogram("conv", "histConv")(ret => {
+        isLoading(false);
+        if (!ret.success) {
+            alert(ret.message);
+            boxImg(2).src = "";
+        } else
+            boxImg(2).src = getURL(ret.image);
+    });
 });

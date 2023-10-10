@@ -40,7 +40,7 @@ def formData(success, img, msg):
     print(success and ("S: " + msg) or ("F: " + msg))
     return {
         "success": success,
-        "image": encode_base64(img),
+        "image": img is not None and encode_base64(img) or None,
         "message": msg,
     }
 
@@ -56,8 +56,8 @@ def import_image(imgName, imgData):
         # Return Result
         cv2.imwrite(set_path(imgName), img)
         return formData(True, img, "Image Imported")
-    except Exception as errMsg:
-        formData(False, None, str(errMsg))
+    except Exception:
+        formData(False, None, "Image Import Failed")
 
 
 # TODO Homework 1: Rotate Image
@@ -91,8 +91,8 @@ def rotate_image(imgName_in, imgName_save, angle):
         # Return Result
         cv2.imwrite(set_path(imgName_save), img)
         return formData(True, img, "Image Rotated " + str(angle) + " Degree")
-    except Exception as errMsg:
-        formData(False, None, str(errMsg))
+    except Exception:
+        formData(False, None, "Image Rotation Failed")
 
 
 # TODO Homework 2: Show Histogram
@@ -116,8 +116,8 @@ def show_histogram(imgName_in, imgName_save):
         # Return Result
         retImg = cv2.imread(set_path(imgName_save))
         return formData(True, retImg, "Histogram Created")
-    except Exception as errMsg:
-        formData(False, None, str(errMsg))
+    except Exception:
+        formData(False, None, "Histogram Creation Failed")
 
 
 # TODO Homework 3-1: Add Noise -- Gaussian White Noise
@@ -152,8 +152,8 @@ def gen_GaussianW_noise(imgName_in, imgName_save, mean, sigma):
         return formData(
             True, noise, "Gaussian White Noise Generated with sigma " + str(sigma)
         )
-    except Exception as errMsg:
-        formData(False, None, str(errMsg))
+    except Exception:
+        formData(False, None, "Gaussian White Noise Generation Failed")
 
 
 # TODO Homework 3-2: Add Noise -- Salt and Pepper Noise
@@ -185,13 +185,13 @@ def gen_SaltPepper_noise(imgName_in, imgName_save, edge):
         return formData(
             True, noise, "Salt and Pepper Noise Generated with edge " + str(edge)
         )
-    except Exception as errMsg:
-        formData(False, None, str(errMsg))
+    except Exception:
+        formData(False, None, "Salt and Pepper Noise Generation Failed")
 
 
 # TODO Homework 3-3: Mix Image with Noise
 @eel.expose
-def mix_img(imgName_in, imgName_add, imgName_save, offset, isCover):
+def mix_image(imgName_in, imgName_add, imgName_save, offset, isCover):
     try:
         img1 = cv2.imread(set_path(imgName_in))
         img2 = cv2.imread(set_path(imgName_add))
@@ -219,9 +219,54 @@ def mix_img(imgName_in, imgName_add, imgName_save, offset, isCover):
         return formData(
             True, img1, "Image Mixed with " + imgName_in + " & " + imgName_add
         )
-    except Exception as errMsg:
-        formData(False, None, str(errMsg))
+    except Exception:
+        formData(False, None, "Image Mix Failed")
 
 
-# Start up Window & Set Window Size
+# TODO Homework 4: Convolution
+@eel.expose
+def conv_image(imgName_in, imgName_save, matrix):
+    try:
+        # Set List to Matrix
+        matrix = np.array(matrix)
+        matrix = matrix.astype(np.int32)
+        # Set & Get Matrix Parameters
+        matLen = int(np.sqrt(len(matrix)))  # Matrix Length
+        matPad = int((matLen - 1) / 2)  # Matrix Padding
+        matSum = np.sum(matrix)  # Matrix Sum
+        matrix = matrix.reshape(matLen, matLen)
+        # Read Image
+        img = cv2.imread(set_path(imgName_in))
+        if img is None:
+            raise Exception("Image Not Found in: " + set_path(imgName_in))
+        # Pre-process Image
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # Transform to Grayscale
+        imgConv = np.zeros(img.shape)  # Create Convolution Image Space
+        img = cv2.copyMakeBorder(
+            img, matPad, matPad, matPad, matPad, cv2.BORDER_CONSTANT, value=0
+        )  # Add Padding
+        matrix = np.rot90(matrix, 2)  # Rotate Matrix 180 Degree
+        # Convolution
+        for row in range(img.shape[0] - matPad - 1):
+            for col in range(img.shape[1] - matPad - 1):
+                if row < matPad:  # Row Padding
+                    continue
+                if col < matPad:  # Col Padding
+                    continue
+                conVal: int = 0
+                for mRow in range(matLen):
+                    for mCol in range(matLen):
+                        conVal += (
+                            img[row + mRow - matPad][col + mCol - matPad]
+                            * matrix[mRow][mCol]
+                        )
+                imgConv[row - matPad][col - matPad] = np.clip(conVal, 0, 255)
+        # Return Result
+        cv2.imwrite(set_path(imgName_save), imgConv)
+        return formData(True, imgConv, "Image Convolution Completed")
+    except Exception:
+        formData(False, None, "Image Convolution Failed")
+
+
+# Start up Window & Set Windo w Size
 eel.start("index.html", size=(1000, 800))
