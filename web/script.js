@@ -15,6 +15,7 @@ const histBtn = document.getElementById("histBtn");
 const gwNoiseBtn = document.getElementById("gwNoiseBtn");
 const spNoiseBtn = document.getElementById("spNoiseBtn");
 const convBtn = document.getElementById("convBtn");
+const equalizeBtn = document.getElementById("equalizeBtn");
 // Confirm Buttons
 const rotateConfirm = document.getElementById("rotateConfirm");
 const gwNoiseConfirm = document.getElementById("gwNoiseConfirm");
@@ -297,7 +298,7 @@ spNoiseConfirm.addEventListener("click", async () => {
     });
 });
 
-// [ ] Homework 4 - Convolution
+// [v] Homework 4 - Convolution
 convBtn.addEventListener("click", () => {
     convSizeDialog.showModal();
     // Set All Matrix Invisible
@@ -362,5 +363,37 @@ convConfirm.addEventListener("click", async () => {
             boxImg(2).src = "";
         } else
             boxImg(2).src = getURL(ret.image);
+    });
+});
+
+// [ ] Homework 5 - Histogram Equalization
+equalizeBtn.addEventListener("click", async () => {
+    closeAll(), openBoxs(4);
+    lastAction = "equalize";
+    isLoading(true);
+    // EEL: Histogram Equalization
+    await eel.equalize_image("origin", "equalize")(ret => {
+        isLoading(false);
+        if (!ret.success) {
+            alert(ret.message);
+            boxImg(1).src = "";
+        } else
+            boxImg(1).src = getURL(ret.image);
+    });
+    // EEL: Draw Histogram of original image
+    await eel.show_histogram("origin", "hist")(ret => {
+        if (!ret.success) {
+            alert(ret.message);
+            boxImg(3).src = "";
+        } else
+            boxImg(3).src = getURL(ret.image);
+    });
+    // EEL: Draw Histogram of equalized image
+    await eel.show_histogram("equalize", "histEqualize")(ret => {
+        if (!ret.success) {
+            alert(ret.message);
+            boxImg(4).src = "";
+        } else
+            boxImg(4).src = getURL(ret.image);
     });
 });

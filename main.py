@@ -268,5 +268,24 @@ def conv_image(imgName_in, imgName_save, matrix):
         formData(False, None, "Image Convolution Failed")
 
 
+# TODO Homework 5: Histogram Equalization
+@eel.expose
+def equalize_image(imgName_in, imgName_save):
+    try:
+        # Read Image
+        img = cv2.imread(set_path(imgName_in))
+        if img is None:
+            raise Exception("Image Not Found in: " + set_path(imgName_in))
+        # Convert to Grayscale
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # Equalize Histogram
+        img = cv2.equalizeHist(img)
+        # Return Result
+        cv2.imwrite(set_path(imgName_save), img)
+        return formData(True, img, "Image Histogram Equalized")
+    except Exception:
+        formData(False, None, "Image Histogram Equalization Failed")
+
+
 # Start up Window & Set Windo w Size
 eel.start("index.html", size=(1000, 800))
