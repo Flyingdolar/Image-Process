@@ -57,7 +57,7 @@ def import_image(imgName, imgData):
         cv2.imwrite(set_path(imgName), img)
         return formData(True, img, "Image Imported")
     except Exception:
-        formData(False, None, "Image Import Failed")
+        return formData(False, None, "Image Import Failed")
 
 
 # TODO Homework 1: Rotate Image
@@ -92,7 +92,7 @@ def rotate_image(imgName_in, imgName_save, angle):
         cv2.imwrite(set_path(imgName_save), img)
         return formData(True, img, "Image Rotated " + str(angle) + " Degree")
     except Exception:
-        formData(False, None, "Image Rotation Failed")
+        return formData(False, None, "Image Rotation Failed")
 
 
 # TODO Homework 2: Show Histogram
@@ -117,7 +117,7 @@ def show_histogram(imgName_in, imgName_save):
         retImg = cv2.imread(set_path(imgName_save))
         return formData(True, retImg, "Histogram Created")
     except Exception:
-        formData(False, None, "Histogram Creation Failed")
+        return formData(False, None, "Histogram Creation Failed")
 
 
 # TODO Homework 3-1: Add Noise -- Gaussian White Noise
@@ -153,7 +153,7 @@ def gen_GaussianW_noise(imgName_in, imgName_save, mean, sigma):
             True, noise, "Gaussian White Noise Generated with sigma " + str(sigma)
         )
     except Exception:
-        formData(False, None, "Gaussian White Noise Generation Failed")
+        return formData(False, None, "Gaussian White Noise Generation Failed")
 
 
 # TODO Homework 3-2: Add Noise -- Salt and Pepper Noise
@@ -186,7 +186,7 @@ def gen_SaltPepper_noise(imgName_in, imgName_save, edge):
             True, noise, "Salt and Pepper Noise Generated with edge " + str(edge)
         )
     except Exception:
-        formData(False, None, "Salt and Pepper Noise Generation Failed")
+        return formData(False, None, "Salt and Pepper Noise Generation Failed")
 
 
 # TODO Homework 3-3: Mix Image with Noise
@@ -220,7 +220,7 @@ def mix_image(imgName_in, imgName_add, imgName_save, offset, isCover):
             True, img1, "Image Mixed with " + imgName_in + " & " + imgName_add
         )
     except Exception:
-        formData(False, None, "Image Mix Failed")
+        return formData(False, None, "Image Mix Failed")
 
 
 # TODO Homework 4: Convolution
@@ -229,7 +229,7 @@ def conv_image(imgName_in, imgName_save, matrix):
     try:
         # Set List to Matrix
         matrix = np.array(matrix)
-        matrix = matrix.astype(np.int32)
+        matrix = matrix.astype(np.float32)
         # Set & Get Matrix Parameters
         matLen = int(np.sqrt(len(matrix)))  # Matrix Length
         matPad = int((matLen - 1) / 2)  # Matrix Padding
@@ -260,12 +260,13 @@ def conv_image(imgName_in, imgName_save, matrix):
                             img[row + mRow - matPad][col + mCol - matPad]
                             * matrix[mRow][mCol]
                         )
-                imgConv[row - matPad][col - matPad] = np.clip(conVal, 0, 255)
+                imgConv[row - matPad][col - matPad] = np.clip(int(conVal), 0, 255)
         # Return Result
         cv2.imwrite(set_path(imgName_save), imgConv)
         return formData(True, imgConv, "Image Convolution Completed")
-    except Exception:
-        formData(False, None, "Image Convolution Failed")
+    except Exception as e:
+        print(e)
+        return formData(False, None, "Image Convolution Failed")
 
 
 # TODO Homework 5: Histogram Equalization
@@ -284,7 +285,7 @@ def equalize_image(imgName_in, imgName_save):
         cv2.imwrite(set_path(imgName_save), img)
         return formData(True, img, "Image Histogram Equalized")
     except Exception:
-        formData(False, None, "Image Histogram Equalization Failed")
+        return formData(False, None, "Image Histogram Equalization Failed")
 
 
 # Start up Window & Set Windo w Size
